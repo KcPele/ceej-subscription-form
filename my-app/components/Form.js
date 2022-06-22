@@ -10,35 +10,9 @@ export default function Form() {
         phoneNumber: "",
         email: ""
     })
-    const [errors, setErrors] = useState({});
-    //   Setting button text on form submission
+
   const [buttonText, setButtonText] = useState("Subscribe");
     // Validation check method
-  const handleValidation = () => {
-    let tempErrors = {};
-    let isValid = true;
-
-    if (formData.firstName.length <= 0) {
-      tempErrors["fullname"] = true;
-      isValid = false;
-    }
-    if (formData.lastName.length <= 0) {
-        tempErrors["lastName"] = true;
-        isValid = false;
-      }
-    if (formData.email.length <= 0) {
-      tempErrors["email"] = true;
-      isValid = false;
-    }
-    if (formData.phoneNumber.length <= 0) {
-      tempErrors["phoneNumber"] = true;
-      isValid = false;
-    }
-
-    setErrors({ ...tempErrors });
-    console.log("errors", errors);
-    return isValid;
-  };
 
     const handleChange = (e) => {
         
@@ -58,34 +32,23 @@ export default function Form() {
     const handleSubmit = async (e) => {
         e.preventDefault()
             setButtonText("Sending");
-        // let isValidForm = handleValidation();
         // toast.loading("Sending...")
-        // if (isValidForm) {
-        try {
-            let res = await fetch("/api/contact", {
-              "method": "POST",
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              "body": JSON.stringify(formData)
-            })
-            // const { error } = await res.json();
-            // if (error) {
-            //     toast.error(error);
-            //     setButtonText("Subscribe");
-            //         return;
-            // }
-            // const { message } = await res.json();
-            // toast.success(message)
-      
-                  //if sucess do whatever you like, i.e toast notification
+        // try {
+        //     let res = await fetch("/api/contact", {
+        //       "method": "POST",
+        //       headers: {
+        //         'Content-Type': 'application/json'
+        //       },
+        //       "body": JSON.stringify(formData)
+        //     })
+           
             setTimeout(() => reset(), 2000);
             setButtonText("Subscribe");
-          } catch (error) {
-              // toast error message. whatever you wish 
-              toast.error(error.message)
-              setButtonText("Subscribe");
-          }
+        //   } catch (error) {
+        //       // toast error message. whatever you wish 
+        //       toast.error(error.message)
+        //       setButtonText("Subscribe");
+        //   }
         // console.log(formData)
         
 
