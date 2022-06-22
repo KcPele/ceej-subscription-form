@@ -1,8 +1,11 @@
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import toast from "react-hot-toast"
-export default function Form() {
+import emailjs from '@emailjs/browser';
+import { runFireWorks } from '../lib/utils'
 
+export default function Form() {
+  const form = useRef()
     const [isloading, setIsLoading] = useState(false)
     const [formData, setFormData] = useState({
         firstName: "",
@@ -29,32 +32,28 @@ export default function Form() {
             email: ""
         })
     }
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-            setButtonText("Sending");
-        // toast.loading("Sending...")
-        // try {
-        //     let res = await fetch("/api/contact", {
-        //       "method": "POST",
-        //       headers: {
-        //         'Content-Type': 'application/json'
-        //       },
-        //       "body": JSON.stringify(formData)
-        //     })
-           
+    const sendEmail = async (e) => {
+        e.preventDefault();
+        setIsLoading(true)
+        setButtonText("Sending");
+        await emailjs.sendForm("service_62otgdn", "template_cqit2ct", form.current, 'Ehq0w-lXe9JXidXML')
+          .then((result) => {
+            toast.success("Email sent!")
+              console.log(result.text);
             setTimeout(() => reset(), 2000);
             setButtonText("Subscribe");
-        //   } catch (error) {
-        //       // toast error message. whatever you wish 
-        //       toast.error(error.message)
-        //       setButtonText("Subscribe");
-        //   }
-        // console.log(formData)
-        
-
-    }
+            runFireWorks()
+            setIsLoading(false)
+          }, (error) => {
+              console.log(error.text);
+              toast.error(error.text)
+              setButtonText("Subscribe");
+              setIsLoading(false)
+          });
+      };
+   
    return (
-    <form className="px-8 pt-6 pb-8 mb-4 bg-white rounded" onSubmit={handleSubmit}>
+    <form className="px-8 pt-6 pb-8 mb-4 bg-white rounded" onSubmit={sendEmail} ref={form}>
     <div className="mb-4 md:flex md:justify-between">
         <div className="mb-4 md:mr-2 md:mb-0">
             <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="firstName">
@@ -67,7 +66,7 @@ export default function Form() {
                 onChange={handleChange}
                 value={formData.firstName}
                 type="text"
-
+                required
                 placeholder="First Name"
             />
         </div>
@@ -82,6 +81,7 @@ export default function Form() {
                 onChange={handleChange}
                 value={formData.lastName}
                 type="text"
+                required
                 placeholder="Last Name"
             />
         </div>
@@ -97,6 +97,7 @@ export default function Form() {
             onChange={handleChange}
             value={formData.phoneNumber}
             type="tel"
+            required
             placeholder="Phone Number"
         />
     </div>
@@ -111,6 +112,7 @@ export default function Form() {
             onChange={handleChange}
             value={formData.email}
             type="email"
+            required
             placeholder="Email"
         />
     </div>
@@ -118,6 +120,7 @@ export default function Form() {
         <button
             className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline"
             type="submit"
+            disabled={isloading}
         >
             {buttonText}
         </button>
